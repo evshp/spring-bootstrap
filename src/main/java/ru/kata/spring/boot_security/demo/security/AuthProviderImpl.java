@@ -28,7 +28,7 @@ public class AuthProviderImpl implements AuthenticationProvider {
         String username = authentication.getName();
         UserDetails userDetails = userServiceJPA.loadUserByUsername(username);
         String password = authentication.getCredentials().toString();
-
+        System.out.println(password);
         if (!password.equals(userDetails.getPassword())) {
             throw new BadCredentialsException("Неверный пароль");
         }
