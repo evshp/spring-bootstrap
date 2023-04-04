@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Страница пользователя</title>
+</head>
+<body>
+
+
+<th:block th:if="${not #lists.isEmpty(users)}">
+    <div th:each="user : ${users}">
+        <a th:href="@{/userPage/{id} (id=${user.getId()})}">
+            <span th:text="${user.getName()}"></span> <span th:text="${user.getLastname()}"> </span> </a>
+    </div>
+</th:block>
+
+<p th:text="${user}"></p>
+
+<!-- Проверяем, существует ли элемент в списке, прежде чем отображать кнопки "Обновить" и "Удалить" -->
+<th:block th:if="${user != null}">
+    <form th:method="get"
+          th:action="@{/edit(id=${user.getId()})}"
+          th:object="${user}">
+        <input type="hidden" name="id" th:value="${user.getId()}">
+        <button type="submit">Обновить пользователя</button>
+    </form>
+    <form th:method="delete"
+          th:action="@{/delete(id=${user.getId()})}"
+          th:object="${user}">
+        <button type="submit">Удалить пользователя</button>
+    </form>
+</th:block>
+<hr>
+
+<!-- Форма для создания нового пользователя -->
+<form th:method="post"
+      th:action="@{/postAction}"
+      th:object="${formUser}">
+    <label for="name"> Введите имя </label>
+    <input type="text" th:field="*{name}" id="name">
+    <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Ошибка имени</div>
+    <br>
+    <label for="lastname">Введите фамилию</label>
+    <input type="text" th:field="*{lastname}" id="lastname">\
+    <div style="color: red" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Ошибка фамилии</div>
+    <br>
+    <label for="dateOfBirth">Дата рождения:</label>
+    <input type="date" th:field="*{dateOfBirth}" id="dateOfBirth">
+    <div style="color: red" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}">Ошибка даты
+        рождения
+    </div>
+    <br>
+    <label for="email">Введите email</label>
+    <input type="text" th:field="*{email}" id="email">
+    <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Ошибка email</div>
+    <br>
+    <input type="submit" value="Создать пользователя">
+</form>
+
+
+<hr>
+
+
+</body>
+</html>

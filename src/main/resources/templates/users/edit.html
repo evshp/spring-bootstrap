@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать пользователя</title>
+</head>
+<body>
+
+<form th:method="PATCH"
+      th:action="@{/users/{id} (id= ${user.getId()})}"
+      th:object="${user}">
+
+    <label for="name"> Введите имя </label>
+    <input type="text" th:field="*{name}" id="name">
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Имя не может быть пустым</div>
+    <br>
+    <label for="lastname">Введите фамилию</label>
+    <input type="text" th:field="*{lastname}" id="lastname">
+    <div style="color:red" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Фамилия не может быть пустой</div>
+    <label for="email">Введите email</label>
+    <input type="text" th:field="*{email}" id="email">
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Email не может быть пустым</div>
+    <br>
+    <input type="hidden" th:field="*{id}">
+    <input type="hidden" th:field="*{age}">
+    <input type="hidden" th:field="*{dateOfBirth}">
+    <input type="submit" value="Обновить пользователя">
+</form>
+
+
+</body>
+</html>

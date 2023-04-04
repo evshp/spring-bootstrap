@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org" lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.w3.org/1999/xhtml http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Калькулятор</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body>
+
+<p>Калькулятор</p>
+<hr>
+<a href="/">На главную</a>
+<form method="get">
+    <p>Введите число a:</p>
+    <p><input type="number" name="a"></p>
+    <p>Введите число b:</p>
+    <p><input type="number" name="b"></p>
+    <p>Выберите тип операции</p>
+    <p><input name="operation" type="submit" value="multiply"></p>
+    <p><input name="operation" type="submit" value="addition"></p>
+    <p><input name="operation" type="submit" value="subtraction"></p>
+    <p><input name="operation" type="submit" value="division"></p>
+</form>
+
+
+<p th:text="${answer}"></p>
+
+</body>
+</html>
