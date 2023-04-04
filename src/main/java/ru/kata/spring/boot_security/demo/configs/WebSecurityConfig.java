@@ -45,17 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //        return new InMemoryUserDetailsManager(user);
 //    }
 
+ public 
 
-    private final AuthProviderImpl authProvider;
-
-
-    @Autowired
-    public WebSecurityConfig(AuthProviderImpl authProvider) {
-        this.authProvider = authProvider;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authProvider);
-    }
 }
