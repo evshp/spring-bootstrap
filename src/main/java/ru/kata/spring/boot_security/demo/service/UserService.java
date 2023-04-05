@@ -5,13 +5,14 @@ package ru.kata.spring.boot_security.demo.service;
 
 import ru.kata.spring.boot_security.demo.models.User;
 
+import javax.management.relation.RoleNotFoundException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
 
-    void saveUser(String name, String lastName, LocalDate dateOfBirth , String email, String password);
+    void saveUser(User user) throws RoleNotFoundException;
 
     void removeUserById(long id);
 

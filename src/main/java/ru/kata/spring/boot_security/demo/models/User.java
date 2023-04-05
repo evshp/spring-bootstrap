@@ -3,12 +3,11 @@ package ru.kata.spring.boot_security.demo.models;
 
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
-
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.Period;
-
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -51,6 +50,10 @@ public class User {
     @Column(name = "password")
     @Min(8)
     private String password;
+
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
     public User(String name, String lastName, LocalDate dateOfBirth, String email, String password) {
         this.name = name;

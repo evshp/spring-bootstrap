@@ -6,11 +6,12 @@ import ru.kata.spring.boot_security.demo.models.User;
 
 import java.util.Collection;
 
-public class UserDet implements UserDetails {
+
+public class UserPrincipal implements UserDetails {
 
     private final User userDet;
 
-    public UserDet(User userDet) {
+    public UserPrincipal(User userDet) {
         this.userDet = userDet;
     }
 
@@ -31,12 +32,12 @@ public class UserDet implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override

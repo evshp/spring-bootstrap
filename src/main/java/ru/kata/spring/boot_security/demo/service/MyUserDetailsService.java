@@ -4,38 +4,62 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.models.Role;
 import ru.kata.spring.boot_security.demo.models.User;
+import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
-import ru.kata.spring.boot_security.demo.security.UserDet;
+import ru.kata.spring.boot_security.demo.security.UserPrincipal;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import javax.management.relation.RoleNotFoundException;
+import java.util.*;
 
 
-//Класс UserServiceJPA реализует интерфейс UserService и использует репозиторий UserRepository для работы с базой данных.
-@Service
+@Service("MyUserDetailsService")
 @Transactional(readOnly = true)
-public class UserServiceJPA implements UserService, UserDetailsService {
+public class MyUserDetailsService implements UserService, UserDetailsService {
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
+//    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Autowired
-    public UserServiceJPA(UserRepository userRepository) {
+    public MyUserDetailsService(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+//        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
 
     @Transactional
     @Override
-    public void saveUser(String name, String lastName, LocalDate dateOfBirth, String email, String password) {
-        userRepository.save(new User(name, lastName, dateOfBirth, email, password));
+    public void saveUser(User user) throws RoleNotFoundException {
+        Optional<User> userFromDB = userRepository.findByName(user.getName());
+
+        if (userFromDB.isPresent()) {
+            throw new UsernameNotFoundException("Пользователь не найден");
+        }
+
+        Role userRole = roleRepository.findByName("ROLE_USER");
+
+        if (userRole == null) {
+            throw new RoleNotFoundException("ROLE_USER  не найдена");
+        }
+//
+//        Set<Role> roles = new HashSet<>();
+//        roles.add(userRole);
+//        user.setRoles(roles);
+//        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Transactional
@@ -43,6 +67,8 @@ public class UserServiceJPA implements UserService, UserDetailsService {
     public void removeUserById(long id) {
         userRepository.deleteById(id);
     }
+
+
 
     @Override
     public User getUserById(long id) {
@@ -81,11 +107,12 @@ public class UserServiceJPA implements UserService, UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByName(username);
-        if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not found");
-
-        }
-        return new UserDet(user.get());
+        User user =userRepository.findByName(username).orElseThrow(()->
+                new UsernameNotFoundException("User doesn't exist"));
+        System.out.println(user);
+        return  new UserPrincipal(user);
     }
+
+
+
 }

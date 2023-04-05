@@ -4,17 +4,15 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.Util.UserValidator;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.security.UserDet;
+import ru.kata.spring.boot_security.demo.security.UserPrincipal;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import javax.naming.AuthenticationException;
 import javax.validation.Valid;
 
 @Controller
@@ -60,11 +58,7 @@ public class UsersController {
             return "users/userPage";
         }
         try {
-            userServiceJPA.saveUser(user.getName(),
-                    user.getLastname(),
-                    user.getDateOfBirth(),
-                    user.getEmail(),
-            user.getPassword());
+            userServiceJPA.saveUser(user);
         } catch (Exception e) {
             System.out.println("Исключение: " + e.getMessage());
             return "error";
@@ -106,7 +100,7 @@ public class UsersController {
         Authentication authentication = SecurityContextHolder
                 .getContext()
                 .getAuthentication();
-        UserDet userDetails = (UserDet) authentication.getPrincipal();
+        UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
         System.out.println(userDetails.getUserDetails());
         return "firstPage";
     }
