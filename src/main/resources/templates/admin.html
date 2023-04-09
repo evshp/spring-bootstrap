@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Страница пользователя</title>
 </head>
 <body>
-
 
 <th:block th:if="${not #lists.isEmpty(users)}">
     <div th:each="user : ${users}">
@@ -54,9 +53,17 @@
     <input type="text" th:field="*{email}" id="email">
     <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Ошибка email</div>
     <br>
+    <label for="password">Введите пароль</label>
+    <input type="password" th:field="*{password}" id="password">
+    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Ошибка пароля</div>
+    <br>
     <input type="submit" value="Создать пользователя">
 </form>
+<hr>
 
+<form th:action="@{/logout}" method="post">
+    <button type="submit">Выйти</button>
+</form>
 
 <hr>
 

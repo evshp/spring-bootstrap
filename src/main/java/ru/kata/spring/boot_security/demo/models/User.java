@@ -22,7 +22,7 @@ public class User {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotBlank(message = "Поле не должно быть пустым")
     @Size(min = 2, max = 30, message = "Имя должно быть от 2 до 30 символов")
     @Column(name = "name")
@@ -30,13 +30,13 @@ public class User {
 
     @NotBlank(message = "Поле не должно быть пустым")
     @Size(min = 2, max = 30, message = "Фамилия должна быть от 2 до 30 символов")
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastname;
 
 
     @NotNull(message = "Поле не должно быть пустым")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "dateOfBirth")
+    @Column(name = "date_Of_Birth")
     private LocalDate dateOfBirth;
 
     @Transient
@@ -48,20 +48,12 @@ public class User {
 
 
     @Column(name = "password")
-    @Min(8)
+    @Size(min = 8, message = "Пароль должен быть не менее 8 символов")
     private String password;
 
 
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> roles;
-
-    public User(String name, String lastName, LocalDate dateOfBirth, String email, String password) {
-        this.name = name;
-        this.lastname = lastName;
-        this.dateOfBirth = dateOfBirth;
-        this.email = email;
-        this.password = password;
-    }
 
 
     //Getters and Setters
@@ -76,8 +68,10 @@ public class User {
                 ", name='" + name + '\'' +
                 ", lastname='" + lastname + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
-                ", age=" + getAge() +
+                ", age=" + age +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

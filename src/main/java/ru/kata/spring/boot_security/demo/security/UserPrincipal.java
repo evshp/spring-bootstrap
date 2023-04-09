@@ -9,25 +9,27 @@ import java.util.Collection;
 
 public class UserPrincipal implements UserDetails {
 
-    private final User userDet;
+    private final User UserPrincipal;
 
-    public UserPrincipal(User userDet) {
-        this.userDet = userDet;
+
+    public UserPrincipal(User UserPrincipal) {
+        this.UserPrincipal = UserPrincipal;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        System.out.println(UserPrincipal.getRoles());
+        return UserPrincipal.getRoles();
     }
 
     @Override
     public String getPassword() {
-        return this.userDet.getPassword();
+        return this.UserPrincipal.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.userDet.getName();
+        return this.UserPrincipal.getName();
     }
 
     @Override
@@ -51,6 +53,7 @@ public class UserPrincipal implements UserDetails {
     }
 
     public User getUserDetails() {
-        return this.userDet;
+        return this.UserPrincipal;
     }
+
 }

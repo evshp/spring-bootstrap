@@ -9,7 +9,7 @@ public class FirstController {
 
     @GetMapping("/")
     public String firstPage() {
-        return "firstPage";
+        return "redirect:/user";
     }
 
 }

@@ -1,34 +1,37 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.Util.UserValidator;
 import ru.kata.spring.boot_security.demo.models.User;
-import ru.kata.spring.boot_security.demo.security.UserPrincipal;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
 
 @Controller
-public class UsersController {
+@PreAuthorize(value = "hasRole('ADMIN')")
+public class EntityController {
 
 
-    private UserService userServiceJPA;
-    private UserValidator userValidator;
+    private final UserService userServiceJPA;
+    private final UserValidator userValidator;
+
+
 
     @Autowired
-    public UsersController(UserService userServiceJPA, UserValidator userValidator) {
+    public EntityController(UserService userServiceJPA, UserValidator userValidator) {
         this.userServiceJPA = userServiceJPA;
         this.userValidator = userValidator;
     }
 
     //Показать всех пользователей
+
     @GetMapping("/people")
     public String index(Model model) {
         try {
@@ -38,7 +41,7 @@ public class UsersController {
         } finally {
             model.addAttribute("formUser", new User());
         }
-        return "users/userPage";
+        return "admin";
     }
 
     //Получить пользователя по id
@@ -47,44 +50,55 @@ public class UsersController {
         model.addAttribute("users", userServiceJPA.getAllUsers());
         model.addAttribute("user", userServiceJPA.getUserById(id));
         model.addAttribute("formUser", new User());
-        return "users/userPage";
+        return "admin";
     }
 
     //Создать нового пользователя
     @PostMapping("/postAction")
     public String create(@ModelAttribute("formUser") @Valid User user, BindingResult bindingResult) {
+
         userValidator.validate(user, bindingResult);
+
         if (bindingResult.hasErrors()) {
-            return "users/userPage";
+            return "admin";
         }
+
         try {
+            System.out.println("Создаем пользоваетля: " + user);
             userServiceJPA.saveUser(user);
         } catch (Exception e) {
             System.out.println("Исключение: " + e.getMessage());
-            return "error";
+            e.printStackTrace();
         }
         return "redirect:/people";
     }
 
     //Контроллер для открытия формы для редактирования пользователя
     @GetMapping("/edit")
-    public String openEditUserForm (Model model, @RequestParam("id") long id) {
+   public String openEditUserForm(Model model, @RequestParam("id") long id) {
         model.addAttribute("user", userServiceJPA.getUserById(id));
-        return "users/edit";
+        return "/edit";
     }
 
     //Метод для обновления данных пользователя
     @PatchMapping("/users/{id}")
     public String update(@ModelAttribute("user") @Valid User user,
                          BindingResult bindingResult) {
-        userValidator.validate(user, bindingResult);
-        if (bindingResult.hasErrors()) {
-            return "users/edit";
-        }
-        userServiceJPA.update(user.getId(), user);
-        return "redirect:/people";
-    }
 
+        userValidator.validate(user, bindingResult);
+        if (bindingResult.hasFieldErrors("name")
+                || bindingResult.hasFieldErrors("lastname")
+                || bindingResult.hasFieldErrors("email")) {
+
+            return "/edit";
+        }
+        String name = user.getName();
+        String lastName = user.getLastname();
+        String email = user.getEmail();
+        userServiceJPA.update(user.getId(), name, lastName, email);
+        return "redirect:/people";
+
+    }
 
     //Метод для удаления пользователя
     @DeleteMapping("/delete")
@@ -93,17 +107,5 @@ public class UsersController {
         System.out.println("Удален пользователь с id: " + user.getId());
         return "redirect:/people";
     }
-
-
-    @GetMapping("/showUserInfo")
-    public String showUserInfo() {
-        Authentication authentication = SecurityContextHolder
-                .getContext()
-                .getAuthentication();
-        UserPrincipal userDetails = (UserPrincipal) authentication.getPrincipal();
-        System.out.println(userDetails.getUserDetails());
-        return "firstPage";
-    }
-
 
 }
