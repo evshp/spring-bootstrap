@@ -1,72 +1,107 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
+
     <meta charset="UTF-8">
-    <title>Страница пользователя</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <title>Admin page</title>
 </head>
 <body>
 
-<th:block th:if="${not #lists.isEmpty(users)}">
-    <div th:each="user : ${users}">
-        <a th:href="@{/userPage/{id} (id=${user.getId()})}">
-            <span th:text="${user.getName()}"></span> <span th:text="${user.getLastname()}"> </span> </a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+    <div class="container-fluid">
+        <h6 class="user-info" th:text=" 'Username: ' + ${name} + ' ' + 'Roles: ' + ${roles}"></h6>
+        <div class="mr-auto"></div>
+        <div class="ml-auto order-2">
+            <a class="navbar-brand text-dark" th:href="@{/logout}">Logout</a>
+        </div>
     </div>
-</th:block>
+</nav>
 
-<p th:text="${user}"></p>
 
-<!-- Проверяем, существует ли элемент в списке, прежде чем отображать кнопки "Обновить" и "Удалить" -->
-<th:block th:if="${user != null}">
-    <form th:method="get"
-          th:action="@{/edit(id=${user.getId()})}"
-          th:object="${user}">
-        <input type="hidden" name="id" th:value="${user.getId()}">
-        <button type="submit">Обновить пользователя</button>
-    </form>
-    <form th:method="delete"
-          th:action="@{/delete(id=${user.getId()})}"
-          th:object="${user}">
-        <button type="submit">Удалить пользователя</button>
-    </form>
-</th:block>
-<hr>
+<section id="pageContent">
+    <div class="row">
+        <div class="col-md-3 bg-white">
+            <div class="list-group p-3">
+                <a th:href="@{/people}" class="list-group-item list-group-item-action"
+                   th:classappend="${#httpServletRequest.getRequestURI() == '/people'
+                   || #httpServletRequest.getRequestURI() == '/postAction' ? 'active' : ''}">Users
+                    table</a>
+                <a th:href="@{/#}" class="list-group-item list-group-item-action"
+                   th:classappend="${#httpServletRequest.getRequestURI() == '/new' ? 'active' : ''}">User</a>
+            </div>
+        </div>
+        <div class="col-md-9 bg-light">
+            <div class="container-fluid align-content-start">
+                <h1 class="text-lg-start"> Admin panel</h1>
+                <nav>
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" th:href="@{/people}">Users table</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:href="@{/user}">New user</a>
+                        </li>
+                    </ul>
+                </nav>
+                <div class="border bg-light w-300">
+                    <h5 class="text-lg-start">All users</h5>
+                </div>
+                <div>
+                    <table class="table table-striped border ">
+                        <thead>
+                        <tr>
+                            <span class="border-top"> </span>
+                            <th scope="col">ID</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Last Name</th>
+                            <th scope="col">Age</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Roles</th>
+                            <th scope="col">Edit</th>
+                            <th scope="col">Delete</th>
+                        </tr>
+                        </thead>
+                        <tbody>
 
-<!-- Форма для создания нового пользователя -->
-<form th:method="post"
-      th:action="@{/postAction}"
-      th:object="${formUser}">
-    <label for="name"> Введите имя </label>
-    <input type="text" th:field="*{name}" id="name">
-    <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Ошибка имени</div>
-    <br>
-    <label for="lastname">Введите фамилию</label>
-    <input type="text" th:field="*{lastname}" id="lastname">\
-    <div style="color: red" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}">Ошибка фамилии</div>
-    <br>
-    <label for="dateOfBirth">Дата рождения:</label>
-    <input type="date" th:field="*{dateOfBirth}" id="dateOfBirth">
-    <div style="color: red" th:if="${#fields.hasErrors('dateOfBirth')}" th:errors="*{dateOfBirth}">Ошибка даты
-        рождения
+                        <tr th:each="user : ${users}">
+                            <td th:text="${user.id}"></td>
+                            <td th:text="${user.name}"></td>
+                            <td th:text="${user.lastname}"></td>
+                            <td th:text="${user.age}"></td>
+                            <td th:text="${user.email}"></td>
+
+                            <td>
+                            <td th:text="${user.isAdmin() ? 'Admin, ' : ''} + ${user.isUser() ? 'User' : ''}"></td>
+                            </td>
+
+                            <td>
+                                <form th:action="@{/edit}" th:object="${user}" id="edit-form">
+                                    <button type="submit" class="btn btn-info" form="edit-form">Edit</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form th:action="@{/delete}" th:object="${user}" id="delete-form">
+                                    <button type="submit" class="btn btn-danger" form="delete-form">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
-    <br>
-    <label for="email">Введите email</label>
-    <input type="text" th:field="*{email}" id="email">
-    <div style="color: red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">Ошибка email</div>
-    <br>
-    <label for="password">Введите пароль</label>
-    <input type="password" th:field="*{password}" id="password">
-    <div style="color: red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Ошибка пароля</div>
-    <br>
-    <input type="submit" value="Создать пользователя">
-</form>
-<hr>
-
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Выйти</button>
-</form>
-
-<hr>
+</section>
 
 
+<footer class="container background-light">
+
+</footer>
+
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </body>
 </html>

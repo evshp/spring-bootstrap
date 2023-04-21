@@ -52,8 +52,12 @@ public class User {
     private String password;
 
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> roles;
+
+
+
+
 
 
     //Getters and Setters
@@ -73,6 +77,16 @@ public class User {
                 ", password='" + password + '\'' +
                 ", roles=" + roles +
                 '}';
+    }
+
+
+    //Methods
+    public boolean isAdmin() {
+        return roles.stream().anyMatch(role -> role.getName().equals("ROLE_ADMIN"));
+    }
+
+    public boolean isUser() {
+        return roles.stream().anyMatch(role -> role.getName().equals("ROLE_USER"));
     }
 }
 

@@ -26,4 +26,10 @@ public interface UserService {
     Optional<User> getUserByEmail(String email);
     @Transactional
     Optional<User> getUserByName(String name);
+
+    public String getCurrentUserRoles();
+
+    public String getCurrentUserName();
+
+
 }

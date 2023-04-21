@@ -1,13 +1,15 @@
 package ru.kata.spring.boot_security.demo.controllers;
 
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.Banner;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import ru.kata.spring.boot_security.demo.Util.UserValidator;
 import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
@@ -15,25 +17,32 @@ import ru.kata.spring.boot_security.demo.service.UserService;
 import javax.validation.Valid;
 
 @Controller
-@PreAuthorize(value = "hasRole('ADMIN')")
-public class EntityController {
+//@PreAuthorize(value = "hasRole('ADMIN')")
+public class AdminController {
 
 
     private final UserService userServiceJPA;
     private final UserValidator userValidator;
 
 
-
     @Autowired
-    public EntityController(UserService userServiceJPA, UserValidator userValidator) {
+    public AdminController(UserService userServiceJPA, UserValidator userValidator) {
         this.userServiceJPA = userServiceJPA;
         this.userValidator = userValidator;
     }
+
 
     //Показать всех пользователей
 
     @GetMapping("/people")
     public String index(Model model) {
+        String name = userServiceJPA.getCurrentUserName();
+        String roles = userServiceJPA.getCurrentUserRoles();
+        model.addAttribute("name", name);
+        model.addAttribute("roles", roles);
+        model.addAttribute("activeTab", "tab1");
+
+
         try {
             model.addAttribute("users", userServiceJPA.getAllUsers());
         } catch (Exception e) {
@@ -41,7 +50,7 @@ public class EntityController {
         } finally {
             model.addAttribute("formUser", new User());
         }
-        return "admin";
+        return "TestPage";
     }
 
     //Получить пользователя по id
@@ -55,16 +64,22 @@ public class EntityController {
 
     //Создать нового пользователя
     @PostMapping("/postAction")
-    public String create(@ModelAttribute("formUser") @Valid User user, BindingResult bindingResult) {
+    public String create(@ModelAttribute("formUser") @Valid User user,
+                         BindingResult bindingResult, Model model) {
 
         userValidator.validate(user, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "admin";
+            System.out.println("Ошибка валидации");
+            String name = userServiceJPA.getCurrentUserName();
+            String roles = userServiceJPA.getCurrentUserRoles();
+            model.addAttribute("name", name);
+            model.addAttribute("roles", roles);
+            model.addAttribute ("activeTab", "tab2");
+            System.out.println("Возвращаем страницу TestPage");
+            return "TestPage";
         }
-
         try {
-            System.out.println("Создаем пользоваетля: " + user);
             userServiceJPA.saveUser(user);
         } catch (Exception e) {
             System.out.println("Исключение: " + e.getMessage());
@@ -73,9 +88,20 @@ public class EntityController {
         return "redirect:/people";
     }
 
+
+    @GetMapping("errorValidation")
+    public String errorValidation(Model model) {
+        String name = userServiceJPA.getCurrentUserName();
+        String roles = userServiceJPA.getCurrentUserRoles();
+        model.addAttribute("name", name);
+        model.addAttribute("roles", roles);
+        model.addAttribute("activeTab", "tab2");
+        return "TestPage";
+    }
+
     //Контроллер для открытия формы для редактирования пользователя
     @GetMapping("/edit")
-   public String openEditUserForm(Model model, @RequestParam("id") long id) {
+    public String openEditUserForm(Model model, @RequestParam("id") long id) {
         model.addAttribute("user", userServiceJPA.getUserById(id));
         return "/edit";
     }

@@ -33,6 +33,7 @@ public class UserValidator implements Validator {
         User user = (User) target;
         String tempName = user.getName();
         String tempEmail = user.getEmail();
+        String tempRole = user.getRoles().toString();
 
         if (user.getId() == null) {
             // Проверяем, если имя пользователя уже есть в базе данных, добавляем ошибку
@@ -49,12 +50,25 @@ public class UserValidator implements Validator {
 
             try {
                 if (userServiceJPA.getUserByEmail(tempEmail).isPresent()) {
+                    System.out.println("Пользователь с таким email уже существует");
                     errors.rejectValue("email", "", "Пользователь с таким email уже существует");
                 }
             } catch (Exception e) {
                 errors.rejectValue("email", "Произошла ошибка при проверке email пользователя");
                 logger.error("Ошибка при проверке email пользователя: " + e.getMessage());
             }
+
+            try {
+                if (!tempRole.contains("ROLE_ADMIN") && !tempRole.contains("ROLE_USER")) {
+                    errors.rejectValue("roles", "", "Укажите роль пользователя");
+                }
+            } catch (Exception e) {
+                errors.rejectValue("roles", "Произошла ошибка при проверке роли пользователя");
+                logger.error("Ошибка при проверке роли пользователя: " + e.getMessage());
+            }
+
+
+
 
         } else {
 

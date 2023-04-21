@@ -19,6 +19,7 @@ public class Role implements GrantedAuthority {
 
     @Id
     private Long id;
+
     private String name;
 
     @Transient
@@ -32,8 +33,6 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String toString() {
-        return "Role{" +
-                "name='" + name + '\'' +
-                '}';
+        return name;
     }
 }
