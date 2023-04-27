@@ -16,7 +16,6 @@ import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.security.UserPrincipal;
 
-import javax.management.relation.RoleNotFoundException;
 import java.util.*;
 
 
@@ -43,19 +42,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void saveUser(User user) throws RoleNotFoundException {
+    public void saveUser(User user) {
         Role userRole = roleRepository.findByName("ROLE_USER");
-
         Set<Role> roles = new HashSet<>();
+        roles.add(userRole);
 
-        if (!user.getRoles().isEmpty()) {
-            roles = user.getRoles();
+        if (user.getRoles().isEmpty()) {
+            user.setRoles(roles);
         }
-
-        if (userRole == null) {
-            throw new RoleNotFoundException("ROLE_USER  не найдена");
-        }
-
 
         if (userRepository.findByName(user.getName()).isPresent()) {
             throw new UsernameNotFoundException("Пользователь с таким именем уже существует");
@@ -134,10 +128,6 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     }
 
 
-    public boolean isUserExist(String name) {
-        return userRepository.findByName(name).isPresent();
-    }
-
     public String getCurrentUserName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
@@ -147,7 +137,5 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().toString();
     }
-
-
 
 }

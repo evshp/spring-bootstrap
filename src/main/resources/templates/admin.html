@@ -91,7 +91,7 @@
                                     <td th:text="${user.age}"></td>
                                     <td th:text="${user.email}"></td>
 
-                                    <td th:text="${user.isAdmin() ? 'Admin, ' : ''} + ${user.isUser() ? 'User' : ''}"></td>
+                                    <td th:text="${user.isAdmin() ? 'Admin ' : ''} + ${user.isUser() ? 'User' : ''}"></td>
 
                                     <td>
                                         <form id="edit-user" th:action="@{/user/{id}(id=${user.id})}">

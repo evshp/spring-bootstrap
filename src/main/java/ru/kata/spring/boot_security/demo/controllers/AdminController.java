@@ -41,7 +41,6 @@ public class AdminController {
         } finally {
             model.addAttribute("formUser", new User());
         }
-        System.out.println("Вывод страницы МАЙН");
         return "admin";
     }
 

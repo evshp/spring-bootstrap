@@ -27,9 +27,9 @@ public interface UserService {
     @Transactional
     Optional<User> getUserByName(String name);
 
-    public String getCurrentUserRoles();
+    String getCurrentUserRoles();
 
-    public String getCurrentUserName();
+    String getCurrentUserName();
 
 
 }

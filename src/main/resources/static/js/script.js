@@ -32,7 +32,6 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                 let modal = $('#userEditDialog')
                 let userId = $('#userId').val();
 
-
                 $.ajax({
                     url: '/user/delete/' + userId,
                     type: 'DELETE',
