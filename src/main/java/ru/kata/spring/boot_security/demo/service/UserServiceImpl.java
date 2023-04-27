@@ -48,9 +48,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
         Set<Role> roles = new HashSet<>();
 
-        if (user.getRoles().isEmpty()) {
-            roles.add(userRole);
-            user.setRoles(roles);
+        if (!user.getRoles().isEmpty()) {
+            roles = user.getRoles();
         }
 
         if (userRole == null) {
@@ -92,14 +91,28 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Transactional
     @Override
-    public void update(long id, String name, String lastName, String email) {
-        User userFromDB = userRepository.findById(id).orElseThrow(() ->
+    public boolean update(User user) {
+
+        User userFromDB = userRepository.findById(user.getId()).orElseThrow(() ->
                 new UsernameNotFoundException("User doesn't exist"));
 
-        userFromDB.setName(name);
-        userFromDB.setLastname(lastName);
-        userFromDB.setEmail(email);
-        userRepository.save(userFromDB);
+
+        if (user.getRoles().isEmpty()) {
+            user.setRoles(userFromDB.getRoles());
+        }
+
+        if (!user.getPassword().equals(userFromDB.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
+
+        try {
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            System.out.println("Ошибка при сохранении пользователя");
+            return false;
+        }
+
     }
 
 

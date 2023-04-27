@@ -20,7 +20,7 @@ public interface UserService {
 
     List<User> getAllUsers();
 
-    void update(long id, String name, String lastName, String email);
+    boolean update(User user);
 
     @Transactional
     Optional<User> getUserByEmail(String email);

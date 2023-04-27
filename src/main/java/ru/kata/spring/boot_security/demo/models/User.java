@@ -57,9 +57,6 @@ public class User {
 
 
 
-
-
-
     //Getters and Setters
     public byte getAge() {
         return (byte) Period.between(dateOfBirth, LocalDate.now()).getYears();
