@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 import ru.kata.spring.boot_security.demo.Util.UserValidator;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
+
+import java.util.Objects;
 
 @RestController
 public class UserResources {
@@ -49,17 +52,21 @@ public class UserResources {
 //    }
 
     @PostMapping("/user/edit")
-    public ResponseEntity<Boolean> updateEdit(@Validated @RequestBody User user, BindingResult result) {
-        if (result.hasErrors()) {
-            System.out.println(ResponseEntity.badRequest().body(result.getAllErrors()));
-            return ResponseEntity.badRequest().body(false);
+    public ResponseEntity<?> updateEdit(@Validated @RequestBody User user, BindingResult result) {
+
+        if (result.hasFieldErrors("name")) {
+            FieldError nameError = result.getFieldError("name");
+            if (nameError != null && Objects.equals(nameError.getCode(), "User.duplicate.edit")) {
+                return ResponseEntity.badRequest().body(nameError.getDefaultMessage());
+            }
         }
+
 
         boolean success = userService.update(user);
         if (success) {
             return ResponseEntity.ok(true);
         } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(true);
         }
     }
 

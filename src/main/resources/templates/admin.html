@@ -86,7 +86,7 @@
 
                                 <tr th:each="user : ${users}">
                                     <td th:text="${user.id}"></td>
-                                    <td th:text="${user.name}"></td>
+                                    <td th:text="${user.name}" id="${user.id} + 2"></td>
                                     <td th:text="${user.lastname}"></td>
                                     <td th:text="${user.age}"></td>
                                     <td th:text="${user.email}"></td>
@@ -233,6 +233,14 @@
                                         <option value="2" class="centered-elements">User</option>
                                     </select>
                                 </div>
+
+                                <div class="form-group">
+                                    <div id="user-error" class="error" style="display: none;"></div>
+                                </div>
+
+
+
+
                             </form>
                         </div>
                         <div class="modal-footer">

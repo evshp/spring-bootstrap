@@ -9,6 +9,7 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                 url: '/user/' + userId,
                 success: (data) => {
                     let modal = $(this)
+                    modal.find('#user-error').hide()
                     modal.find('#userId').val(data.id)
                     modal.find('#user-name').val(data.name).prop('readonly', true)
                     modal.find('#user-lastname').val(data.lastname).prop('readonly', true)
@@ -20,6 +21,7 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                     modal.find('#save-user-button').addClass('btn-danger')
                         .removeClass('btn-primary')
                         .text('Delete')
+                    modal.find('#user-error').val('')
                 },
                 error: (err) => {
                     alert(err);
@@ -58,8 +60,11 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                 error: (err) => {
                     alert(err);
                 },
+
                 success: (data) => {
+
                     let modal = $(this)
+                    modal.find('#user-error').hide()
                     modal.find('#userId').val(data.id)
                     modal.find('#user-name').val(data.name).prop('readonly', false)
                     modal.find('#user-lastname').val(data.lastname).prop('readonly', false)
@@ -72,6 +77,9 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                     modal.find('#save-user-button').addClass('btn-primary')
                         .removeClass('btn-danger')
                         .text('Save')
+                    modal.find('#user-error').val('')
+
+
                 }
             });
 
@@ -110,24 +118,33 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
 
-                    success: () => {
-                        location.reload()
+                    success: function (response) {
+                        modal.hide()
+                        $('.modal-backdrop').remove()
+
+
                     },
-                    error: (err) => {
-                        alert(err);
-                        console.log(err);
+                    error: function (xhr, status, error) {
+                        if (xhr.status === 400 ) {
+                            console.log(xhr.responseText)
+                            modal.find('#user-error').text(xhr.responseText).css('color','red').show();
+
+
+
+                        }
                     }
 
                 })
 
-                modal.hide();
-                $('.modal-backdrop').remove();
+
 
 
             });
         }
     }
 })
+
+
 
 
 

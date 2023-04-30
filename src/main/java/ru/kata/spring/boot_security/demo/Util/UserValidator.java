@@ -75,7 +75,7 @@ public class UserValidator implements Validator {
             Optional<User> existingUserName = userServiceJPA.getUserByName(tempName);
             if (existingUserName.isPresent()) {
                 if (!Objects.equals(user.getId(), existingUserName.get().getId())) {
-                    errors.rejectValue("name", "", "Пользователь с таким именем существует");
+                    errors.rejectValue("name", "User.duplicate.edit", "Пользователь с таким именем уже существует");
                 }
             }
 
