@@ -45,11 +45,6 @@ public class UserResources {
         return userService.getUserById(userId);
     }
 
-//    @PostMapping("/user/edit")
-//    public boolean updateEdit(@RequestBody User user) {
-//        return userService.update(user);
-//
-//    }
 
     @PostMapping("/user/edit")
     public ResponseEntity<?> updateEdit(@Validated @RequestBody User user, BindingResult result) {

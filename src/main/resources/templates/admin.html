@@ -30,7 +30,7 @@
                    th:classappend="${#httpServletRequest.getRequestURI() == '/people'
                     || #httpServletRequest.getRequestURI() == '/postAction'? 'active' : ''}">Users
                     table</a>
-                <a th:href="@{/#}" class="list-group-item list-group-item-action"
+                <a th:href="@{/user}" class="list-group-item list-group-item-action"
                    th:classappend="${#httpServletRequest.getRequestURI() == '/new' ? 'active' : ''}">User</a>
             </div>
         </div>
@@ -86,7 +86,7 @@
 
                                 <tr th:each="user : ${users}">
                                     <td th:text="${user.id}"></td>
-                                    <td th:text="${user.name}" id="${user.id} + 2"></td>
+                                    <td th:text="${user.name}"></td>
                                     <td th:text="${user.lastname}"></td>
                                     <td th:text="${user.age}"></td>
                                     <td th:text="${user.email}"></td>
@@ -104,7 +104,7 @@
                                     </td>
 
                                     <td>
-                                        <form th:action="@{/delete}"  id="delete-form">
+                                        <form th:action="@{/delete}" id="delete-form">
                                             <button type="button" class="btn btn-danger" id="delete-button"
                                                     data-bs-toggle="modal" data-bs-target="#userEditDialog"
                                                     th:data-userId="${user.id}" th:data-action="delete">Delete
@@ -222,7 +222,8 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="user-password" class="col-form-label" id="user-password-label">Password</label>
+                                    <label for="user-password" class="col-form-label"
+                                           id="user-password-label">Password</label>
                                     <input type="password" class="form-control" id="user-password">
                                 </div>
 
@@ -237,9 +238,6 @@
                                 <div class="form-group">
                                     <div id="user-error" class="error" style="display: none;"></div>
                                 </div>
-
-
-
 
                             </form>
                         </div>

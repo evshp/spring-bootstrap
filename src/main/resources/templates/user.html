@@ -12,7 +12,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
     <div class="container-fluid">
-        <h6 class="user-info" th:text=" 'Username: ' + ${user.name} + ' ' + 'Roles: ' + ${user.roles}"></h6>
+        <h6 class="user-info" th:text=" 'Username: ' + ${name} + ' ' + 'Roles: ' + ${roles}"></h6>
         <div class="mr-auto"></div>
         <div class="ml-auto order-2">
             <a class="navbar-brand text-dark" th:href="@{/logout}">Logout</a>

@@ -125,18 +125,15 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
 
                     },
                     error: function (xhr, status, error) {
-                        if (xhr.status === 400 ) {
+                        if (xhr.status === 400) {
                             console.log(xhr.responseText)
-                            modal.find('#user-error').text(xhr.responseText).css('color','red').show();
-
+                            modal.find('#user-error').text(xhr.responseText).css('color', 'red').show();
 
 
                         }
                     }
 
                 })
-
-
 
 
             });

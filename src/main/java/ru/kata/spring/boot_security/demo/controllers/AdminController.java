@@ -11,13 +11,17 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @Controller
 public class AdminController {
 
 
-    private final UserService userServiceJPA;
+    private UserService userServiceJPA;
     private final UserValidator userValidator;
+
+
+
 
 
     @Autowired
@@ -25,6 +29,8 @@ public class AdminController {
         this.userServiceJPA = userServiceJPA;
         this.userValidator = userValidator;
     }
+
+
 
 
     @GetMapping("/people")
@@ -43,6 +49,23 @@ public class AdminController {
         }
         return "admin";
     }
+
+
+    @GetMapping("/user")
+    public String userPage(Model model) {
+        String name = userServiceJPA.getCurrentUserName();
+        String roles = userServiceJPA.getCurrentUserRoles();
+        model.addAttribute("name", name);
+        model.addAttribute("roles", roles);
+        try {
+            Optional<User> userOptional = userServiceJPA.getUserByName(name);
+            userOptional.ifPresent(user -> model.addAttribute("user", user));
+        } catch (Exception e) {
+            System.out.println("Ошибка: " + e);
+        }
+        return "user";
+    }
+
 
 
     //Создать нового пользователя
@@ -70,6 +93,8 @@ public class AdminController {
         }
         return "redirect:/people";
     }
+
+
 
 
 
