@@ -87,10 +87,6 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                         .removeClass('btn-danger')
                         .text('Save')
                     modal.find('#user-error').val('');
-
-
-
-
                 }
             });
             // Подтверждение редактирования пользователя
@@ -132,8 +128,6 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                                 const shortenedNames = userRole.map(role => role.name.substring(5));
                                 userRoles.innerText = shortenedNames.join(' ');
                                 console.log('Пользователь успешно отредактирован');
-
-
                             },
                             error: (err) => {
                                 alert(err);
@@ -147,10 +141,7 @@ $('#userEditDialog').on('shown.bs.modal', function (event) {
                             modal.find('#user-error').text(xhr.responseText).css('color', 'red').show();
                         }
                     }
-
                 })
-
-
             });
         }
     }
@@ -190,8 +181,6 @@ $('#createForm').submit(function(event) {
                 }
             }
     })
-
-
 });
 
 
