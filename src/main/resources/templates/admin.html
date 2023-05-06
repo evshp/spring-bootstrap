@@ -68,10 +68,10 @@
                                 <h5 class="text-lg-start">All users</h5>
                             </div>
 
-                            <table class="table table-striped border">
+                            <table class="table table-striped border" id="users-table">
                                 <thead>
+                                <span class="border-top bg-white"> </span>
                                 <tr class="border">
-                                    <span class="border-top bg-white"> </span>
                                     <th scope="col">ID</th>
                                     <th scope="col">First Name</th>
                                     <th scope="col">Last Name</th>
@@ -84,27 +84,25 @@
                                 </thead>
                                 <tbody>
 
-                                <tr th:each="user : ${users}">
+                                <tr th:each="user : ${users}" th:id="'user-' + ${user.id}">
                                     <td th:text="${user.id}"></td>
-                                    <td th:text="${user.name}"></td>
-                                    <td th:text="${user.lastname}"></td>
-                                    <td th:text="${user.age}"></td>
-                                    <td th:text="${user.email}"></td>
-
-                                    <td th:text="${user.isAdmin() ? 'Admin ' : ''} + ${user.isUser() ? 'User' : ''}"></td>
+                                    <td th:text="${user.name}" th:id="'name-' + ${user.id}"></td>
+                                    <td th:text="${user.lastname}" th:id="'lastname-' + ${user.id}"></td>
+                                    <td th:text="${user.age}" th:id="'age-' + ${user.id}"></td>
+                                    <td th:text="${user.email}" th:id="'email-' + ${user.id}"></td>
+                                    <td th:id="'role-' + ${user.id}" th:text="${user.isAdmin() ? 'ADMIN ' : ''  } + ${user.isUser() ? 'USER' : ''}"></td>
 
                                     <td>
-                                        <form id="edit-user" th:action="@{/user/{id}(id=${user.id})}">
+                                        <form id="edit-user">
                                             <button type="button" class="btn btn-info" id="edit-button"
                                                     data-bs-toggle="modal" data-bs-target="#userEditDialog"
                                                     th:data-userId="${user.id}"> Edit
                                             </button>
                                         </form>
-
                                     </td>
 
                                     <td>
-                                        <form th:action="@{/delete}" id="delete-form">
+                                        <form id="delete-form">
                                             <button type="button" class="btn btn-danger" id="delete-button"
                                                     data-bs-toggle="modal" data-bs-target="#userEditDialog"
                                                     th:data-userId="${user.id}" th:data-action="delete">Delete
@@ -123,65 +121,57 @@
                         <div class="border bg-light text-center">
                             <h5 class="text-lg-start">Add new user</h5>
                         </div>
-                        <form
-                                class="centered-elements border s"
-                                th:method="post"
-                                th:action="@{/postAction}"
-                                th:object="${formUser}">
+                        <form id="createForm"
+                                class="centered-elements border s">
                             <div class="col-md-9">
                                 <label for="name" class="form-label centered-label"> First name </label>
-                                <input type="text" class="form-control" th:field="*{name}" id="name" required>
-                                <div style="color: red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Ошибка
-                                    имени
-                                </div>
+                                <input type="text" class="form-control" id="name" required>
+                                <div style="color: red" id="name-error"></div>
                             </div>
 
                             <div class="col-md-9">
                                 <label for="lastname" class="form-label centered-label"> Last name </label>
-                                <input type="text" class="form-control" th:field="*{lastname}" id="lastname" required>
-                                <div style="color: red" th:if="${#fields.hasErrors('lastname')}"
-                                     th:errors="*{lastname}">Ошибка фамилии
-                                </div>
+                                <input type="text" class="form-control" id="lastname" required>
+                                <div style="color: red" id="lastname-error"></div>
                             </div>
 
                             <div class="col-md-9">
                                 <label for="dateOfBirth" class="form-label centered-label "> Date of Birth </label>
                                 <input type="date" class="form-control text-lg-center" style="width: 100%"
-                                       th:field="*{dateOfBirth}" id="dateOfBirth" required>
-                                <div style="color: red" th:if="${#fields.hasErrors('dateOfBirth')}"
-                                     th:errors="*{dateOfBirth}"> Неверная дата
-                                </div>
+                                       id="dateOfBirth" required>
+                                <div style="color: red" id="dateOfBirth-error"></div>
                             </div>
 
                             <div class="col-md-9">
                                 <label for="email" class="form-label centered-label"> Email </label>
-                                <input type="text" class="form-control" th:field="*{email}" id="email">
-                                <div style="color: red" th:if="${#fields.hasErrors('email')}"
-                                     th:errors="*{email}">Ошибка почта
-                                </div>
+                                <input type="text" class="form-control" id="email">
+                                <div style="color: red"></div>
                             </div>
 
                             <div class="col-md-9">
                                 <label for="password" class="form-label centered-label"> Password </label>
-                                <input type="text" class="form-control" th:field="*{password}" id="password">
-                                <div style="color: red" th:if="${#fields.hasErrors('password')}"
-                                     th:errors="*{password}"> Неверный пароль
-                                </div>
+                                <input type="text" class="form-control" id="password">
+                                <div style="color: red"></div>
                             </div>
 
                             <div class="col-md-9">
                                 <label for="roles" class="form-label centered-label">Roles</label>
                                 <select class="form-select form-select-sm text-lg-center "
                                         aria-label=".form-select-sm пример"
-                                        id="roles" name="roles" th:field="*{roles}" multiple>
-                                    <option value="2">User</option>
+                                        id="roles" name="roles"multiple>
                                     <option value="1">Admin</option>
+                                    <option value="2">User</option>
                                 </select>
                             </div>
 
                             <div class="col-md-9 text-center">
                                 <button type="submit" class="btn btn-success">Add new user</button>
                             </div>
+
+                            <div class="form-group">
+                                <div id="user-create-error" class="error" style="display: none;"></div>
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -243,7 +233,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" id="save-user-button">Save</button>
+                            <button type="button" class="btn btn-primary" id="confirm-button">Edit</button>
                         </div>
                     </div>
                 </div>

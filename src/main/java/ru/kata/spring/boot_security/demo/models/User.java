@@ -3,10 +3,12 @@ package ru.kata.spring.boot_security.demo.models;
 
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Arrays;
 import java.util.Set;
 
 @Entity
@@ -56,7 +58,6 @@ public class User {
     private Set<Role> roles;
 
 
-
     //Getters and Setters
     public byte getAge() {
         return (byte) Period.between(dateOfBirth, LocalDate.now()).getYears();
@@ -85,5 +86,7 @@ public class User {
     public boolean isUser() {
         return roles.stream().anyMatch(role -> role.getName().equals("ROLE_USER"));
     }
+
+
 }
 

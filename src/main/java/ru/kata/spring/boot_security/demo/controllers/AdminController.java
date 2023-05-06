@@ -68,31 +68,31 @@ public class AdminController {
 
 
 
-    //Создать нового пользователя
-    @PostMapping("/postAction")
-    public String create(@ModelAttribute("formUser") @Valid User user,
-                         BindingResult bindingResult, Model model) {
-
-        userValidator.validate(user, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            System.out.println("Ошибка валидации");
-            String name = userServiceJPA.getCurrentUserName();
-            String roles = userServiceJPA.getCurrentUserRoles();
-            model.addAttribute("name", name);
-            model.addAttribute("roles", roles);
-            model.addAttribute ("activeTab", "tab2");
-            System.out.println("Возвращаем страницу TestPage");
-            return "admin";
-        }
-        try {
-            userServiceJPA.saveUser(user);
-        } catch (Exception e) {
-            System.out.println("Исключение: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return "redirect:/people";
-    }
+//    //Создать нового пользователя
+//    @PostMapping("/postAction")
+//    public String create(@ModelAttribute("formUser") @Valid User user,
+//                         BindingResult bindingResult, Model model) {
+//
+//        userValidator.validate(user, bindingResult);
+//
+//        if (bindingResult.hasErrors()) {
+//            System.out.println("Ошибка валидации");
+//            String name = userServiceJPA.getCurrentUserName();
+//            String roles = userServiceJPA.getCurrentUserRoles();
+//            model.addAttribute("name", name);
+//            model.addAttribute("roles", roles);
+//            model.addAttribute ("activeTab", "tab2");
+//            System.out.println("Возвращаем страницу TestPage");
+//            return "admin";
+//        }
+//        try {
+//            userServiceJPA.saveUser(user);
+//        } catch (Exception e) {
+//            System.out.println("Исключение: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//        return "redirect:/people";
+//    }
 
 
 

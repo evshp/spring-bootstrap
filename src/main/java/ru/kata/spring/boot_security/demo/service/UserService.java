@@ -12,7 +12,7 @@ import java.util.Optional;
 
 public interface UserService {
 
-    void saveUser(User user) throws RoleNotFoundException;
+    Boolean saveUser(User user) throws RoleNotFoundException;
 
     void removeUserById(long id);
 

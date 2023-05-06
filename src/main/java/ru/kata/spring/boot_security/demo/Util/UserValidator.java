@@ -3,6 +3,7 @@ package ru.kata.spring.boot_security.demo.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -19,7 +20,7 @@ public class UserValidator implements Validator {
     private static final Logger logger = LoggerFactory.getLogger(UserValidator.class);
 
     @Autowired
-    public UserValidator(UserService userServiceJPA) {
+    public UserValidator(@Lazy UserService userServiceJPA) {
         this.userServiceJPA = userServiceJPA;
     }
 
@@ -40,30 +41,33 @@ public class UserValidator implements Validator {
             try {
                 Optional<User> userByName = userServiceJPA.getUserByName(tempName);
                  if (userByName.isPresent()) {
-                    errors.rejectValue("name", "", "Пользователь с таким именем уже существует");
+                    errors.rejectValue("name", "User.duplicate.name", "Пользователь с таким именем уже существует");
                 }
 
             } catch (Exception e) {
-                errors.rejectValue("name", "Произошла ошибка при проверке имени пользователя");
+                errors.rejectValue("name", "User.duplicate.name");
                 logger.error("Ошибка при проверке имени пользователя: " + e.getMessage());
             }
 
             try {
                 if (userServiceJPA.getUserByEmail(tempEmail).isPresent()) {
                     System.out.println("Пользователь с таким email уже существует");
-                    errors.rejectValue("email", "", "Пользователь с таким email уже существует");
+                    errors.rejectValue("email", "User.duplicate.email", "Пользователь с таким email уже существует");
                 }
             } catch (Exception e) {
-                errors.rejectValue("email", "Произошла ошибка при проверке email пользователя");
+                errors.rejectValue("email", "User.duplicate.email"
+                        , "Произошла ошибка при проверке email пользователя");
                 logger.error("Ошибка при проверке email пользователя: " + e.getMessage());
             }
 
             try {
                 if (!tempRole.contains("ROLE_ADMIN") && !tempRole.contains("ROLE_USER")) {
-                    errors.rejectValue("roles", "", "Укажите роль пользователя");
+                    System.out.println("Укажите роль пользователя");
+                    errors.rejectValue("roles", "User.roles.empty", "Укажите роль пользователя");
                 }
             } catch (Exception e) {
-                errors.rejectValue("roles", "Произошла ошибка при проверке роли пользователя");
+                System.out.println("Ошибка при проверке роли пользователя");
+                errors.rejectValue("roles", "User.roles.empty");
                 logger.error("Ошибка при проверке роли пользователя: " + e.getMessage());
             }
 
@@ -75,14 +79,14 @@ public class UserValidator implements Validator {
             Optional<User> existingUserName = userServiceJPA.getUserByName(tempName);
             if (existingUserName.isPresent()) {
                 if (!Objects.equals(user.getId(), existingUserName.get().getId())) {
-                    errors.rejectValue("name", "User.duplicate.edit", "Пользователь с таким именем уже существует");
+                    errors.rejectValue("name", "User.duplicate.name", "Пользователь с таким именем уже существует");
                 }
             }
 
             Optional<User> existingUserEmail = userServiceJPA.getUserByEmail(tempEmail);
             if (existingUserEmail.isPresent()) {
                 if (!Objects.equals(user.getId(), existingUserEmail.get().getId())) {
-                    errors.rejectValue("email", "", "Пользователь с таким email существует");
+                    errors.rejectValue("email", "User.duplicate.email", "Пользователь с таким email существует");
                 }
             }
 

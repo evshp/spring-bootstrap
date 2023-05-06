@@ -56,7 +56,7 @@
                         <td th:text="${user.lastname}"></td>
                         <td th:text="${user.age}"></td>
                         <td th:text="${user.email}"></td>
-                        <td th:text="${user.isAdmin() ? 'Admin, ' : ''} + ${user.isUser() ? 'User' : ''}"></td>
+                        <td th:text="${user.isAdmin() ? 'ADMIN ' : ''  } + ${user.isUser() ? 'USER' : ''}"></td>
                         </tbody>
                     </table>
                 </div>
@@ -69,7 +69,6 @@
 <footer class="container background-light">
 
 </footer>
-
 
 
 <script th:src="@{/js/bootstrap.min.js}"></script>

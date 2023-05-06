@@ -2,12 +2,12 @@ package ru.kata.spring.boot_security.demo.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.models.Role;
@@ -15,6 +15,8 @@ import ru.kata.spring.boot_security.demo.models.User;
 import ru.kata.spring.boot_security.demo.repository.RoleRepository;
 import ru.kata.spring.boot_security.demo.repository.UserRepository;
 import ru.kata.spring.boot_security.demo.security.UserPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 import java.util.*;
 
@@ -27,30 +29,24 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     private final RoleRepository roleRepository;
 
 
+    @Value("${app.defaultRoleName}")
+    private String defaultRoleName;
 
 
-    private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(12);
+    private final BCryptPasswordEncoder passwordEncoder; //= new BCryptPasswordEncoder(12);
 
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository) {
+    public UserServiceImpl(UserRepository userRepository, RoleRepository roleRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-
+        this.passwordEncoder = passwordEncoder;
     }
 
 
     @Transactional
     @Override
-    public void saveUser(User user) {
-        Role userRole = roleRepository.findByName("ROLE_USER");
-        Set<Role> roles = new HashSet<>();
-        roles.add(userRole);
-
-        if (user.getRoles().isEmpty()) {
-            user.setRoles(roles);
-        }
-
+    public Boolean saveUser(User user) {
         if (userRepository.findByName(user.getName()).isPresent()) {
             throw new UsernameNotFoundException("Пользователь с таким именем уже существует");
         }
@@ -60,7 +56,17 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
+
+        if (user.getRoles().isEmpty()) {
+            user.setRoles(Set.of(roleRepository.findByName(defaultRoleName)));
+        }
+
+        try {
+            userRepository.save(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
 
     }
 
@@ -74,6 +80,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public User getUserById(long id) {
         Optional<User> foundUser = userRepository.findById(id);
+        foundUser.ifPresent(User::getRoles);
         return foundUser.orElse(null);
     }
 
